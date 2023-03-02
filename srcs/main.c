@@ -6,60 +6,46 @@
 /*   By: lbouchon <lbouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 11:35:59 by lbouchon          #+#    #+#             */
-/*   Updated: 2023/02/24 13:26:25 by lbouchon         ###   ########.fr       */
+/*   Updated: 2023/03/02 15:33:01 by lbouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
 
-void	initialize_struct(t_ph *ph)
+void	initialize_struct(t_args *args)
 {
-	ph->args.nb_philo = 0;
-	ph->args.die = 0;
-	ph->args.sleep = 0;
-	ph->args.nb_eat = 0;
-	ph->args.nb_philo = 0;
+	args->nb_philo = 0;
+	args->die = 0;
+	args->sleep = 0;
+	args->nb_eat = 0;
+	args->nb_philo = 0;
 }
 
-void	*hello(void *arg)
-{
-	int	i;
-
-	i = 0;
-	usleep(10000);
-	while (i < 100)
-	{
-		printf("\033[0;31mthread 1 : Bonjour\n");
-		i++;
-	}
-	return (NULL);
-}
-
-int	ft_fill_struct(int ac, char **av, t_ph *ph)
+int	ft_fill_struct(int ac, char **av, t_philo *ph, t_args *args)
 {
 	if (ac == 1)
 	{
-		ph->args.nb_philo = ft_check_atoi(av[ac]);
-		if (ph->args.nb_philo == -1)
+		args->nb_philo = ft_check_atoi(av[ac]);
+		if (args->nb_philo == -1)
 			return (ft_error("Bad arguments\n", 2));
 			
 	}
 	if (ac == 2)
 	{
-		ph->args.eat = ft_check_atoi(av[ac]);
-		if (ph->args.eat == -1)
+		args->eat = ft_check_atoi(av[ac]);
+		if (args->eat == -1)
 			return (ft_error("Bad arguments\n", 2));
 	}
 	if (ac == 3)
 	{
-		ph->args.sleep = ft_check_atoi(av[ac]);
-		if (ph->args.sleep == -1)
+		args->sleep = ft_check_atoi(av[ac]);
+		if (args->sleep == -1)
 			return (ft_error("Bad arguments\n", 2));
 	}
 	if (ac == 4)
 	{
-		ph->args.nb_eat = ft_check_atoi(av[ac]);
-		if (ph->args.nb_eat == -1)
+		args->nb_eat = ft_check_atoi(av[ac]);
+		if (args->nb_eat == -1)
 			return (ft_error("Bad arguments\n", 2));
 	}
 	return (0);
@@ -67,35 +53,44 @@ int	ft_fill_struct(int ac, char **av, t_ph *ph)
 
 void	*routine(void *arg)
 {
-	int		i;
+	t_philo			*ph;
+	int				left_fork;
+	long int		actual_time;
 
-	i = 0;
-	while (i < 5)
-	{
-		i++;
-	}
+	ph = (t_philo*)arg;
+	// if (ph->id % 2 == 0)
+	// 	ft_usleep(1);
+	actual_time = get_time();
+	if (ph->id == 1)
+		left_fork = ph->nb_philo - 1;
+	else
+		left_fork = ph->id - 1;
+	pthread_mutex_lock(&ph->mutex[left_fork]);
+	printf("%ldms\t Philo %d took a fork\n", actual_time - ph->start_time, ph->id);
+	//pthread_mutex_lock(&ph->mutex[ph->id - 1]);
+	//printf("%ldms\t Philo %d took a fork\n", actual_time - ph->start_time, ph->id);
+	//pthread_mutex_unlock(&ph->mutex[left_fork]);
+	//pthread_mutex_unlock(&ph->mutex[ph->id - 1]);
 	return (NULL);
 }
 
-int	create_philo(t_ph *ph)
+int	create_philo(t_philo *ph)
 {
 	int	i;
 	int	res;
 	
 	i = 0;
-	id_philo(ph);
-	while (i < ph->args.nb_philo)
+	while (i < ph->nb_philo)
 	{
-		printf("Philo id :%d\n", ph->philo[i].id);
-		res = pthread_create(&ph->philo[i].philo, NULL, routine, &ph->philo + i);
+		res = pthread_create(&ph[i].thread, NULL, routine, ph + i);
 		if (res != 0)
 			ft_error("Problem in creation of thread\n", 2);
 		i++;
 	}
 	i = 0;
-	while (i < ph->args.nb_philo)
+	while (i < ph->nb_philo)
 	{
-		res = pthread_join(ph->philo[i].philo, NULL);
+		res = pthread_join(ph[i].thread, NULL);
 		if (res != 0)
 			ft_error("Problem in join thread\n", 2);
 		i++;
@@ -103,14 +98,40 @@ int	create_philo(t_ph *ph)
 	return (0);
 }
 
-int	id_philo(t_ph *ph)
+int	create_mutex(t_philo *ph)
 {
 	int	i;
+	int	res;
 
 	i = 0;
-	while (i < ph->args.nb_philo)
+	ph->mutex = malloc(sizeof(pthread_mutex_t) * ph->nb_philo);
+	if (!ph->mutex)
+		return (-1);
+	while (i < ph->nb_philo)
 	{
-		ph->philo[i].id = i + 1;
+		res = pthread_mutex_init(ph->mutex + i, NULL);
+		if (res != 0)
+			return (-1);
+		i++;
+	}
+	return (0);
+}
+
+int	init_philo(t_philo *ph, t_args *args)
+{
+	int	i;
+	int	start_time;
+
+	i = 0;
+	start_time = get_time();
+	while (i < args->nb_philo)
+	{
+		ph[i].start_time = start_time;
+		ph[i].id = i + 1;
+		ph[i].nb_philo = args->nb_philo;
+		ph[i].sleep = args->sleep;
+		ph[i].nb_eat = args->nb_eat;
+		ph[i].fork = args->nb_philo;
 		i++;
 	}
 	return (0);
@@ -118,21 +139,25 @@ int	id_philo(t_ph *ph)
 
 int main(int ac, char **av)
 {
-	t_ph	ph;
+	t_args	args;
+	t_philo	*philo;
 
 	if (ac < 5 || ac > 6)
-		printf("Error\nNumber of arguments is invalid\n");
-	initialize_struct(&ph);
+	{
+		ft_error("Error\nNumber of arguments is invalid !\n", 2);
+		return (-1);
+	}
+	initialize_struct(&args);
 	while (--ac >= 1)
 	{
-		if (ft_fill_struct(ac, av, &ph) == -1)
+		if (ft_fill_struct(ac, av, philo, &args) == -1)
 			return (-1);
 	}
-	ph.philo = malloc(sizeof(t_philo) * ph.args.nb_philo);
-	if (!ph.philo)
+	philo = malloc(sizeof(t_philo) * args.nb_philo);
+	if (!philo)
 		ft_error("Malloc failed\n", 2);
-		if (create_philo(&ph) != 0)
-			return (-1);
-		id_philo(&ph);
+	init_philo(philo, &args);
+	create_mutex(philo);
+	create_philo(philo);
 	return (0);
 }

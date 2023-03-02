@@ -6,7 +6,7 @@
 /*   By: lbouchon <lbouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 11:34:16 by lbouchon          #+#    #+#             */
-/*   Updated: 2023/02/24 12:40:43 by lbouchon         ###   ########.fr       */
+/*   Updated: 2023/03/02 11:03:27 by lbouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,19 @@
 # include <limits.h>
 # include <pthread.h>
 # include <unistd.h>
+# include <sys/time.h>
 
 typedef struct s_philo
 {
-	pthread_t	philo;
-	int			id;
+	pthread_t		thread;
+	pthread_mutex_t	*mutex;
+	int				nb_philo;
+	int				die;
+	int				sleep;
+	int				nb_eat;
+	int				id;
+	int				start_time;
+	int				fork;
 }	t_philo;
 
 typedef struct s_args
@@ -34,17 +42,20 @@ typedef struct s_args
 	int	nb_eat;
 }	t_args;
 
-typedef struct s_ph
-{
-	t_philo	*philo;
-	t_args	args;
-}	t_ph;
+/*--MAIN.C--*/
+
+int	create_mutex(t_philo *ph);
 
 /*--FT_UTILS.C--*/
 
 int		ft_check_atoi(char *str);
 int		ft_strlen(char *str);
 int		ft_error(char *str, int fd);
-int	id_philo(t_ph *ph);
+int		id_philo(t_philo *ph);
+
+/*--TIME.C--*/
+
+long int	get_time(void);
+void	ft_usleep(long int time_in_ms);
 
 #endif
