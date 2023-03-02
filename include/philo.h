@@ -6,7 +6,7 @@
 /*   By: lbouchon <lbouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 11:34:16 by lbouchon          #+#    #+#             */
-/*   Updated: 2023/03/02 11:03:27 by lbouchon         ###   ########.fr       */
+/*   Updated: 2023/03/02 15:40:35 by lbouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,11 +35,12 @@ typedef struct s_philo
 
 typedef struct s_args
 {
-	int	nb_philo;
-	int	die;
-	int	eat;
-	int	sleep;
-	int	nb_eat;
+	pthread_mutex_t	*mutex;
+	int				nb_philo;
+	int				die;
+	int				eat;
+	int				sleep;
+	int				nb_eat;
 }	t_args;
 
 /*--MAIN.C--*/

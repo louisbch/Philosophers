@@ -6,7 +6,7 @@
 /*   By: lbouchon <lbouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 11:35:59 by lbouchon          #+#    #+#             */
-/*   Updated: 2023/03/02 15:33:01 by lbouchon         ###   ########.fr       */
+/*   Updated: 2023/03/02 15:43:55 by lbouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ int	create_mutex(t_philo *ph)
 		return (-1);
 	while (i < ph->nb_philo)
 	{
-		res = pthread_mutex_init(ph->mutex + i, NULL);
+		res = pthread_mutex_init(ph[i].mutex + i, NULL);
 		if (res != 0)
 			return (-1);
 		i++;
@@ -153,9 +153,10 @@ int main(int ac, char **av)
 		if (ft_fill_struct(ac, av, philo, &args) == -1)
 			return (-1);
 	}
+	create_mutex(philo);
 	philo = malloc(sizeof(t_philo) * args.nb_philo);
 	if (!philo)
-		ft_error("Malloc failed\n", 2);
+		return (-1);
 	init_philo(philo, &args);
 	create_mutex(philo);
 	create_philo(philo);
