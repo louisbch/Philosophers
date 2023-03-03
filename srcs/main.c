@@ -6,7 +6,7 @@
 /*   By: lbouchon <lbouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 11:35:59 by lbouchon          #+#    #+#             */
-/*   Updated: 2023/03/03 15:10:02 by lbouchon         ###   ########.fr       */
+/*   Updated: 2023/03/03 15:12:52 by lbouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,11 @@ int	ft_fill_struct(int ac, char **av, t_philo *ph, t_args *args)
 	if (args->sleep == -1)
 		return (ft_error("Bad arguments\n", 2));
 	if (av[5])
+	{
 		args->nb_eat = ft_check_atoi(av[5]);
+		if (args->nb_eat == -1)
+			return (ft_error("Bad arguments\n", 2));
+	}
 	return (0);
 }
 
@@ -70,7 +74,6 @@ void	*routine(void *arg)
 	ph = (t_philo*)arg;
 	if (ph->id % 2 == 0)
 	 	ft_usleep(1);
-	printf("%d\n", ph->nb_eat);
 	if (ph->nb_eat > 0)
 	{
 		while (ph->nb_eat != 0)

@@ -6,7 +6,7 @@
 /*   By: lbouchon <lbouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 12:12:08 by lbouchon          #+#    #+#             */
-/*   Updated: 2023/03/03 14:51:33 by lbouchon         ###   ########.fr       */
+/*   Updated: 2023/03/03 15:13:15 by lbouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,11 @@ int	ft_check_atoi(char *str)
 	{
 		res = res * 10 + str[i] - '0';
 		if (res * sign > INT_MAX)
-			return (-2);
+			return (-1);
 		i++;
 	}
 	if (str[i] || (sign == -1 && i == 1) || i == 0)
-			return (-3);
+			return (-1);
 	return (res * sign);
 }
 
