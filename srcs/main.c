@@ -6,7 +6,7 @@
 /*   By: lbouchon <lbouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 11:35:59 by lbouchon          #+#    #+#             */
-/*   Updated: 2023/03/03 15:12:52 by lbouchon         ###   ########.fr       */
+/*   Updated: 2023/03/03 15:28:35 by lbouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,16 +54,16 @@ void	routine_of_philo(t_philo *ph)
 	else
 		left_fork = ph->id - 1;
 	pthread_mutex_lock(&ph->mutex[ph->id]);
-	print("took a fork", ph);
+	print("\033[1;33mtook a fork\033[0m", ph);
 	pthread_mutex_lock(&ph->mutex[left_fork]);
-	print("took a fork", ph);
-	print("is eating", ph);
+	print("\033[1;33mtook a fork\033[0m", ph);
+	print("\033[1;32mis eating\033[0m", ph);
 	ft_usleep(ph->eat);
 	pthread_mutex_unlock(&ph->mutex[ph->id]);
 	pthread_mutex_unlock(&ph->mutex[left_fork]);
-	print("is sleeping", ph);
+	print("\033[1;34mis sleeping\033[0m", ph);
 	ft_usleep(ph->sleep);
-	print("is thinking", ph);
+	print("\033[1;35mis thinking\033[0m", ph);
 }
 
 void	*routine(void *arg)
