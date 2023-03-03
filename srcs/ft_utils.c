@@ -6,7 +6,7 @@
 /*   By: lbouchon <lbouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 12:12:08 by lbouchon          #+#    #+#             */
-/*   Updated: 2023/02/24 12:03:09 by lbouchon         ###   ########.fr       */
+/*   Updated: 2023/03/03 14:51:33 by lbouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,4 +60,12 @@ int	ft_error(char *str, int fd)
 		return (0);
 	write(fd, str, ft_strlen(str));
 	return (-1);
+}
+
+void	print(char *str, t_philo *ph)
+{
+	int	time;
+	
+	time = get_time() - ph->start_time;
+	printf("%dms\t Philo %d %s\n", time, ph->id + 1, str);
 }

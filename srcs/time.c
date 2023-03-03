@@ -6,7 +6,7 @@
 /*   By: lbouchon <lbouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 11:18:29 by lbouchon          #+#    #+#             */
-/*   Updated: 2023/03/01 16:29:24 by lbouchon         ###   ########.fr       */
+/*   Updated: 2023/03/03 11:07:28 by lbouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,5 +29,5 @@ void	ft_usleep(long int time_in_ms)
 	
 	start_time = get_time();
 	while ((get_time() - start_time) < time_in_ms)
-		usleep(10);
+		usleep(100);
 }

@@ -6,7 +6,7 @@
 /*   By: lbouchon <lbouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 11:34:16 by lbouchon          #+#    #+#             */
-/*   Updated: 2023/03/02 15:40:35 by lbouchon         ###   ########.fr       */
+/*   Updated: 2023/03/03 14:52:33 by lbouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ typedef struct s_philo
 	int				sleep;
 	int				nb_eat;
 	int				id;
+	int				eat;
 	int				start_time;
 	int				fork;
 }	t_philo;
@@ -45,14 +46,14 @@ typedef struct s_args
 
 /*--MAIN.C--*/
 
-int	create_mutex(t_philo *ph);
+int	create_mutex(t_args *args);
 
 /*--FT_UTILS.C--*/
 
 int		ft_check_atoi(char *str);
 int		ft_strlen(char *str);
 int		ft_error(char *str, int fd);
-int		id_philo(t_philo *ph);
+void	print(char *str, t_philo *ph);
 
 /*--TIME.C--*/
 
