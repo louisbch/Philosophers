@@ -6,7 +6,7 @@
 /*   By: lbouchon <lbouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 11:34:16 by lbouchon          #+#    #+#             */
-/*   Updated: 2023/03/13 16:01:20 by lbouchon         ###   ########.fr       */
+/*   Updated: 2023/03/13 17:44:11 by lbouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ void	print_status(char *str, t_philo *ph);
 
 /*--TIME.C--*/
 
-long int	get_time(void);
-void	ft_usleep(long int time_in_ms);
+int		get_time(void);
+void	ft_usleep(int time_in_ms);
 
 #endif
