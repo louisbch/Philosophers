@@ -6,7 +6,7 @@
 /*   By: lbouchon <lbouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 11:35:59 by lbouchon          #+#    #+#             */
-/*   Updated: 2023/03/03 15:28:35 by lbouchon         ###   ########.fr       */
+/*   Updated: 2023/03/13 17:18:41 by lbouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 
 void	initialize_struct(t_args *args)
 {
+	args->dead = malloc(sizeof(int));
+	if (!args->dead)
+		return ;
 	args->nb_philo = 0;
 	args->die = 0;
 	args->sleep = 0;
@@ -54,37 +57,80 @@ void	routine_of_philo(t_philo *ph)
 	else
 		left_fork = ph->id - 1;
 	pthread_mutex_lock(&ph->mutex[ph->id]);
-	print("\033[1;33mtook a fork\033[0m", ph);
+	print_status("\033[1;33mtook a fork\033[0m", ph);
 	pthread_mutex_lock(&ph->mutex[left_fork]);
-	print("\033[1;33mtook a fork\033[0m", ph);
-	print("\033[1;32mis eating\033[0m", ph);
+	print_status("\033[1;33mtook a fork\033[0m", ph);
+	pthread_mutex_lock(ph->write);
+	ph->last_meal = get_time() - ph->start_time;
+	pthread_mutex_unlock(ph->write);
+	print_status("\033[1;32mis eating\033[0m", ph);
 	ft_usleep(ph->eat);
 	pthread_mutex_unlock(&ph->mutex[ph->id]);
 	pthread_mutex_unlock(&ph->mutex[left_fork]);
-	print("\033[1;34mis sleeping\033[0m", ph);
+	print_status("\033[1;34mis sleeping\033[0m", ph);
 	ft_usleep(ph->sleep);
-	print("\033[1;35mis thinking\033[0m", ph);
+	print_status("\033[1;35mis thinking\033[0m", ph);
 }
 
 void	*routine(void *arg)
 {
 	t_philo			*ph;
-	int				left_fork;
+	int				life;
 
 	ph = (t_philo*)arg;
+	life = 0;
 	if (ph->id % 2 == 0)
 	 	ft_usleep(1);
 	if (ph->nb_eat > 0)
 	{
-		while (ph->nb_eat != 0)
+		while (ph->nb_eat != 0 && ph->dead[0] != 1)
 		{
 			routine_of_philo(ph);
 			ph->nb_eat--;
 		}
 	}
 	else
-		routine_of_philo(ph);
+	{
+		while (life == 0 && ph->dead[0] != 1)
+			routine_of_philo(ph);
+	}
 	return (NULL);
+}
+
+void	death(t_philo *ph, long actual)
+{
+	pthread_mutex_lock(ph->death);
+	pthread_mutex_lock(ph->write);
+	printf("%ldms\t Philo %d \033[1;31mdied\033[0m\n", actual, ph->id + 1);
+	ph->dead[0] = 1;
+	pthread_mutex_unlock(ph->death);
+	pthread_mutex_unlock(ph->write);
+}
+
+int	check_philo(t_philo *ph)
+{
+	int		i;
+	int		die;
+	long	actual;
+
+	die = 0;
+	while (ph->dead[0] != 1)
+	{
+		ft_usleep(100);
+		i = 0;
+		while (i <= ph->nb_philo)
+		{
+			actual = get_time() - ph->start_time;
+			if (actual >= (long)ph->last_meal + (long)ph->die)
+			{
+				death(ph, actual);
+				break ;
+			}
+			printf("%d\n", i);
+			i++;
+		}
+	}
+	return (0);
 }
 
 int	create_philo(t_philo *ph)
@@ -100,6 +146,8 @@ int	create_philo(t_philo *ph)
 			ft_error("Problem in creation of thread\n", 2);
 		i++;
 	}
+	if (check_philo(ph) == 0)
+		return (0);
 	i = 0;
 	while (i < ph->nb_philo)
 	{
@@ -115,8 +163,18 @@ int	create_mutex(t_args *args)
 {
 	int	i;
 	int	res;
+	int	res1;
+	int	res2;
 
 	i = 0;
+	args->death = malloc(sizeof(pthread_mutex_t));
+	res1 = pthread_mutex_init(args->death, NULL);
+	if (res1 != 0)
+		return (-1);
+	args->write = malloc(sizeof(pthread_mutex_t));
+	res2 = pthread_mutex_init(args->write, NULL);
+	if (res2 != 0)
+		return (-1);
 	args->mutex = malloc(sizeof(pthread_mutex_t) * args->nb_philo);
 	if (!args->mutex)
 		return (-1);
@@ -141,11 +199,14 @@ int	init_philo(t_philo *ph, t_args *args)
 	{
 		ph[i].start_time = start_time;
 		ph[i].id = i;
+		ph[i].last_meal = 0;
+		ph[i].death = args->death;
+		ph[i].write = args->write;
 		ph[i].nb_philo = args->nb_philo;
 		ph[i].eat = args->eat;
 		ph[i].sleep = args->sleep;
 		ph[i].nb_eat = args->nb_eat;
-		ph[i].fork = args->nb_philo;
+		ph[i].dead = args->dead;
 		ph[i].mutex = args->mutex;
 		i++;
 	}

@@ -6,7 +6,7 @@
 /*   By: lbouchon <lbouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 12:12:08 by lbouchon          #+#    #+#             */
-/*   Updated: 2023/03/03 15:13:15 by lbouchon         ###   ########.fr       */
+/*   Updated: 2023/03/13 16:56:14 by lbouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,10 +62,13 @@ int	ft_error(char *str, int fd)
 	return (-1);
 }
 
-void	print(char *str, t_philo *ph)
+void	print_status(char *str, t_philo *ph)
 {
 	int	time;
 	
 	time = get_time() - ph->start_time;
-	printf("%dms\t Philo %d %s\n", time, ph->id + 1, str);
+	pthread_mutex_lock(ph->write);
+	if (ph->dead[0] != 1)
+		printf("%dms\t Philo %d %s\n", time, ph->id + 1, str);
+	pthread_mutex_unlock(ph->write);
 }
