@@ -6,7 +6,7 @@
 /*   By: lbouchon <lbouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 12:12:08 by lbouchon          #+#    #+#             */
-/*   Updated: 2023/03/14 15:08:36 by lbouchon         ###   ########.fr       */
+/*   Updated: 2023/03/14 17:22:32 by lbouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,16 +37,16 @@ int	ft_check_atoi(char *str)
 		i++;
 	}
 	if (str[i] || (sign == -1 && i == 1) || i == 0)
-			return (-1);
+		return (-1);
 	return (res * sign);
 }
 
-int		ft_strlen(char *str)
+int	ft_strlen(char *str)
 {
 	int	i;
 
 	i = 0;
-	while(str[i])
+	while (str[i])
 		i++;
 	return (i);
 }

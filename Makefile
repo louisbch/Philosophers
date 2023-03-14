@@ -6,7 +6,7 @@
 #    By: lbouchon <lbouchon@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/02/20 11:25:51 by lbouchon          #+#    #+#              #
-#    Updated: 2023/03/14 12:57:37 by lbouchon         ###   ########.fr        #
+#    Updated: 2023/03/14 17:15:16 by lbouchon         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,9 +17,11 @@ DIR = srcs/
 CFLAGS = -Wall -Wextra -Werror
 NORMINETTE = norminette
 
-SRCS = $(DIR)main.c			\
-		$(DIR)ft_utils.c	\
-		$(DIR)time.c		\
+SRCS = $(DIR)main.c				\
+		$(DIR)ft_utils.c		\
+		$(DIR)time.c			\
+		$(DIR)init_and_parse.c	\
+		$(DIR)routine.c			\
 
 OBJS = ${SRCS:.c=.o}
 

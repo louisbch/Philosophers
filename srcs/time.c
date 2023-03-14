@@ -6,7 +6,7 @@
 /*   By: lbouchon <lbouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 11:18:29 by lbouchon          #+#    #+#             */
-/*   Updated: 2023/03/14 14:56:11 by lbouchon         ###   ########.fr       */
+/*   Updated: 2023/03/14 17:25:40 by lbouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	get_time(void)
 void	ft_usleep(int time_in_ms)
 {
 	int	start_time;
-	
+
 	start_time = get_time();
 	while ((get_time() - start_time) < time_in_ms)
 		usleep(100);

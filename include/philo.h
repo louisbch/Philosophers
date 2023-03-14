@@ -6,7 +6,7 @@
 /*   By: lbouchon <lbouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 11:34:16 by lbouchon          #+#    #+#             */
-/*   Updated: 2023/03/14 14:56:06 by lbouchon         ###   ########.fr       */
+/*   Updated: 2023/03/14 17:19:55 by lbouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # include <pthread.h>
 # include <unistd.h>
 # include <sys/time.h>
-#include <stdatomic.h>
+# include <stdatomic.h>
 
 typedef struct s_philo
 {
@@ -27,7 +27,6 @@ typedef struct s_philo
 	pthread_mutex_t	*mutex;
 	pthread_mutex_t	*write;
 	pthread_mutex_t	*death;
-	pthread_mutex_t	*lst_meal;
 	int				nb_philo;
 	int				die;
 	int				*dead;
@@ -44,7 +43,6 @@ typedef struct s_args
 	pthread_mutex_t	*death;
 	pthread_mutex_t	*write;
 	pthread_mutex_t	*mutex;
-	pthread_mutex_t	*lst_meal;
 	int				*dead;
 	int				nb_philo;
 	int				die;
@@ -55,7 +53,7 @@ typedef struct s_args
 
 /*--MAIN.C--*/
 
-int	create_mutex(t_args *args);
+int		create_mutex(t_args *args);
 
 /*--FT_UTILS.C--*/
 
@@ -66,7 +64,22 @@ void	print_status(char *str, t_philo *ph);
 
 /*--TIME.C--*/
 
-int				get_time(void);
-void			ft_usleep(int time_in_ms);
+int		get_time(void);
+void	ft_usleep(int time_in_ms);
+
+/*--INIT_AND_PARSE.C--*/
+
+void	initialize_struct(t_args *args);
+int		ft_fill_struct(int ac, char **av, t_philo *ph, t_args *args);
+int		create_mutex(t_args *args);
+int		init_philo(t_philo *ph, t_args *args);
+
+/*--ROUTINE.C--*/
+
+int		create_philo(t_philo *ph);
+void	*routine(void *arg);
+void	routine_of_philo(t_philo *ph);
+void	check_philo(t_philo *ph);
+void	death(t_philo *ph);
 
 #endif
