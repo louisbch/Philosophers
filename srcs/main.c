@@ -6,7 +6,7 @@
 /*   By: lbouchon <lbouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 11:35:59 by lbouchon          #+#    #+#             */
-/*   Updated: 2023/03/13 17:48:35 by lbouchon         ###   ########.fr       */
+/*   Updated: 2023/03/14 15:12:43 by lbouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,10 @@ void	routine_of_philo(t_philo *ph)
 	print_status("\033[1;33mtook a fork\033[0m", ph);
 	pthread_mutex_lock(&ph->mutex[left_fork]);
 	print_status("\033[1;33mtook a fork\033[0m", ph);
+	pthread_mutex_lock(ph->lst_meal);
 	ph->last_meal = get_time();
-	printf("%d\n", ph->last_meal);
+	printf("Routine : %d\n", ph->last_meal);
+	pthread_mutex_unlock(ph->lst_meal);
 	print_status("\033[1;32mis eating\033[0m", ph);
 	ft_usleep(ph->eat);
 	pthread_mutex_unlock(&ph->mutex[ph->id]);
@@ -74,13 +76,11 @@ void	routine_of_philo(t_philo *ph)
 void	*routine(void *arg)
 {
 	t_philo			*ph;
-	int				life;
 
 	ph = (t_philo*)arg;
-	life = 0;
-	if (ph->id % 2 == 0)
+	if (ph->id % 2)
 	 	ft_usleep(1);
-	if (ph->nb_eat > 0)
+	if (ph->nb_eat != 0)
 	{
 		while (ph->nb_eat != 0 && ph->dead[0] != 1)
 		{
@@ -90,7 +90,7 @@ void	*routine(void *arg)
 	}
 	else
 	{
-		while (life == 0 && ph->dead[0] != 1)
+		while (ph->dead[0] != 1)
 			routine_of_philo(ph);
 	}
 	return (NULL);
@@ -100,23 +100,21 @@ void	death(t_philo *ph)
 {
 	pthread_mutex_lock(ph->death);
 	pthread_mutex_lock(ph->write);
-	printf("%dms\t Philo %d \033[1;31mdied\033[0m\n", get_time() - ph->start_time, ph->id + 1);
+	printf("%dms\t Philo %d \033[1;31mdied\033[0m\n", get_time() - ph->start_time, ph->id);
 	ph->dead[0] = 1;
 	pthread_mutex_unlock(ph->death);
 	pthread_mutex_unlock(ph->write);
 }
 
-int	check_philo(t_philo *ph)
+void	check_philo(t_philo *ph)
 {
 	int		i;
-	int		die;
 
-	die = 0;
 	while (ph->dead[0] != 1)
 	{
 		ft_usleep(100);
 		i = 0;
-		while (i <= ph->nb_philo)
+		while (i < ph->nb_philo)
 		{
 			if (get_time() - ph->last_meal >= ph->die)
 			{
@@ -126,7 +124,6 @@ int	check_philo(t_philo *ph)
 			i++;
 		}
 	}
-	return (0);
 }
 
 int	create_philo(t_philo *ph)
@@ -142,8 +139,7 @@ int	create_philo(t_philo *ph)
 			ft_error("Problem in creation of thread\n", 2);
 		i++;
 	}
-	if (check_philo(ph) == 0)
-		return (0);
+	check_philo(ph);
 	i = 0;
 	while (i < ph->nb_philo)
 	{
@@ -161,6 +157,7 @@ int	create_mutex(t_args *args)
 	int	res;
 	int	res1;
 	int	res2;
+	int	res3;
 
 	i = 0;
 	args->death = malloc(sizeof(pthread_mutex_t));
@@ -170,6 +167,10 @@ int	create_mutex(t_args *args)
 	args->write = malloc(sizeof(pthread_mutex_t));
 	res2 = pthread_mutex_init(args->write, NULL);
 	if (res2 != 0)
+		return (-1);
+	args->lst_meal = malloc(sizeof(pthread_mutex_t));
+	res3 = pthread_mutex_init(args->lst_meal, NULL);
+	if (res3 != 0)
 		return (-1);
 	args->mutex = malloc(sizeof(pthread_mutex_t) * args->nb_philo);
 	if (!args->mutex)
@@ -191,13 +192,12 @@ int	init_philo(t_philo *ph, t_args *args)
 
 	i = 0;
 	start_time = get_time();
-	printf("Hello %d\n", start_time);
 	while (i < args->nb_philo)
 	{
-		ph[i].last_meal = start_time;
 		ph[i].start_time = start_time;
 		ph[i].id = i;
-		ph[i].last_meal = 0;
+		ph[i].last_meal = start_time;
+		ph[i].lst_meal = args->lst_meal;
 		ph[i].die = args->die;
 		ph[i].death = args->death;
 		ph[i].write = args->write;
@@ -207,7 +207,6 @@ int	init_philo(t_philo *ph, t_args *args)
 		ph[i].nb_eat = args->nb_eat;
 		ph[i].dead = args->dead;
 		ph[i].mutex = args->mutex;
-		printf("%d\\n", ph->last_meal);
 		i++;
 	}
 	return (0);

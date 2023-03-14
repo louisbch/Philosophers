@@ -6,7 +6,7 @@
 /*   By: lbouchon <lbouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 11:34:16 by lbouchon          #+#    #+#             */
-/*   Updated: 2023/03/13 17:44:11 by lbouchon         ###   ########.fr       */
+/*   Updated: 2023/03/14 14:56:06 by lbouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <pthread.h>
 # include <unistd.h>
 # include <sys/time.h>
+#include <stdatomic.h>
 
 typedef struct s_philo
 {
@@ -26,6 +27,7 @@ typedef struct s_philo
 	pthread_mutex_t	*mutex;
 	pthread_mutex_t	*write;
 	pthread_mutex_t	*death;
+	pthread_mutex_t	*lst_meal;
 	int				nb_philo;
 	int				die;
 	int				*dead;
@@ -34,7 +36,7 @@ typedef struct s_philo
 	int				id;
 	int				eat;
 	int				start_time;
-	int				last_meal;
+	atomic_int		last_meal;
 }	t_philo;
 
 typedef struct s_args
@@ -42,6 +44,7 @@ typedef struct s_args
 	pthread_mutex_t	*death;
 	pthread_mutex_t	*write;
 	pthread_mutex_t	*mutex;
+	pthread_mutex_t	*lst_meal;
 	int				*dead;
 	int				nb_philo;
 	int				die;
@@ -63,7 +66,7 @@ void	print_status(char *str, t_philo *ph);
 
 /*--TIME.C--*/
 
-int		get_time(void);
-void	ft_usleep(int time_in_ms);
+int				get_time(void);
+void			ft_usleep(int time_in_ms);
 
 #endif
