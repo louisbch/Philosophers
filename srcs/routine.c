@@ -6,7 +6,7 @@
 /*   By: lbouchon <lbouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 17:10:50 by lbouchon          #+#    #+#             */
-/*   Updated: 2023/03/15 15:24:39 by lbouchon         ###   ########.fr       */
+/*   Updated: 2023/03/15 15:31:24 by lbouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,7 @@ void	*routine(void *arg)
 		{
 			routine_of_philo(ph);
 			if (ph->nb_eat - 1 == 0)
-			{
 				ph->full_eat[0] = 1;
-				break ;
-			}
 			ph->nb_eat--;
 		}
 	}
