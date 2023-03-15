@@ -6,7 +6,7 @@
 /*   By: lbouchon <lbouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 11:34:16 by lbouchon          #+#    #+#             */
-/*   Updated: 2023/03/14 17:19:55 by lbouchon         ###   ########.fr       */
+/*   Updated: 2023/03/15 14:31:28 by lbouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ typedef struct s_philo
 	int				eat;
 	int				start_time;
 	atomic_int		last_meal;
+	atomic_int		*full_eat;
 }	t_philo;
 
 typedef struct s_args
@@ -49,11 +50,12 @@ typedef struct s_args
 	int				eat;
 	int				sleep;
 	int				nb_eat;
+	atomic_int		*f_eat;
 }	t_args;
 
 /*--MAIN.C--*/
 
-int		create_mutex(t_args *args);
+void	free_all(t_philo *ph);
 
 /*--FT_UTILS.C--*/
 
@@ -69,7 +71,7 @@ void	ft_usleep(int time_in_ms);
 
 /*--INIT_AND_PARSE.C--*/
 
-void	initialize_struct(t_args *args);
+int		initialize_struct(t_args *args);
 int		ft_fill_struct(int ac, char **av, t_philo *ph, t_args *args);
 int		create_mutex(t_args *args);
 int		init_philo(t_philo *ph, t_args *args);

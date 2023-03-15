@@ -6,28 +6,34 @@
 /*   By: lbouchon <lbouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 17:06:16 by lbouchon          #+#    #+#             */
-/*   Updated: 2023/03/14 17:07:49 by lbouchon         ###   ########.fr       */
+/*   Updated: 2023/03/15 15:28:10 by lbouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
 
-void	initialize_struct(t_args *args)
+int	initialize_struct(t_args *args)
 {
 	args->dead = malloc(sizeof(int));
 	if (!args->dead)
-		return ;
+		return (-1);
+	args->f_eat = malloc(sizeof(int));
+	if (!args->f_eat)
+		return (-1);
 	args->nb_philo = 0;
 	args->die = 0;
 	args->sleep = 0;
 	args->nb_eat = 0;
 	args->nb_philo = 0;
 	args->eat = 0;
+	return (0);
 }
 
 int	ft_fill_struct(int ac, char **av, t_philo *ph, t_args *args)
 {
 	args->nb_philo = ft_check_atoi(av[1]);
+	if (args->nb_philo == 0)
+		return (ft_error("At least one philo please !\n", 2));
 	if (args->nb_philo == -1)
 		return (ft_error("Bad arguments\n", 2));
 	args->die = ft_check_atoi(av[2]);
@@ -45,6 +51,8 @@ int	ft_fill_struct(int ac, char **av, t_philo *ph, t_args *args)
 		if (args->nb_eat == -1)
 			return (ft_error("Bad arguments\n", 2));
 	}
+	else
+		args->nb_eat = -2;
 	return (0);
 }
 
@@ -98,6 +106,7 @@ int	init_philo(t_philo *ph, t_args *args)
 		ph[i].nb_eat = args->nb_eat;
 		ph[i].dead = args->dead;
 		ph[i].mutex = args->mutex;
+		ph[i].full_eat = args->f_eat;
 		i++;
 	}
 	return (0);

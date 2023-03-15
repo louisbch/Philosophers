@@ -6,7 +6,7 @@
 /*   By: lbouchon <lbouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 12:12:08 by lbouchon          #+#    #+#             */
-/*   Updated: 2023/03/14 17:22:32 by lbouchon         ###   ########.fr       */
+/*   Updated: 2023/03/15 15:25:18 by lbouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@ int	ft_check_atoi(char *str)
 	i = 0;
 	res = 0;
 	sign = 1;
-	while (str[i] == 32 || (str[i] >= 9 && str[i] <= 13))
-		i++;
+	if (str[i] == 32 || (str[i] >= 9 && str[i] <= 13))
+		return (-1);
 	if (str[i] == '-')
 	{	
 		if (str[i] == '-')
@@ -69,6 +69,6 @@ void	print_status(char *str, t_philo *ph)
 	time = get_time() - ph->start_time;
 	pthread_mutex_lock(ph->write);
 	if (ph->dead[0] != 1)
-		printf("%dms\t Philo %d %s\n", time, ph->id, str);
+		printf("%dms\t Philo %d %s\n", time, ph->id + 1, str);
 	pthread_mutex_unlock(ph->write);
 }

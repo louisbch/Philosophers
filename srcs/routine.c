@@ -6,7 +6,7 @@
 /*   By: lbouchon <lbouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 17:10:50 by lbouchon          #+#    #+#             */
-/*   Updated: 2023/03/14 17:25:26 by lbouchon         ###   ########.fr       */
+/*   Updated: 2023/03/15 15:24:39 by lbouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,12 +49,17 @@ void	*routine(void *arg)
 		while (ph->nb_eat != 0 && ph->dead[0] != 1)
 		{
 			routine_of_philo(ph);
+			if (ph->nb_eat - 1 == 0)
+			{
+				ph->full_eat[0] = 1;
+				break ;
+			}
 			ph->nb_eat--;
 		}
 	}
 	else
 	{
-		while (ph->dead[0] != 1)
+		while (ph->nb_eat == -2 && ph->dead[0] != 1)
 			routine_of_philo(ph);
 	}
 	return (NULL);
@@ -86,18 +91,21 @@ void	check_philo(t_philo *ph)
 {
 	int	i;
 
-	while (ph->dead[0] != 1)
+	if (ph->nb_eat != 0)
 	{
-		ft_usleep(100);
-		i = 0;
-		while (i < ph->nb_philo)
+		while (ph->dead[0] != 1 && ph->full_eat[0] != 1)
 		{
-			if (get_time() - ph->last_meal >= ph->die)
+			ft_usleep(1 / 10);
+			i = 0;
+			while (i < ph->nb_philo)
 			{
-				death(ph);
-				break ;
+				if (get_time() - ph->last_meal >= ph->die)
+				{
+					death(ph);
+					break ;
+				}
+				i++;
 			}
-			i++;
 		}
 	}
 }
@@ -107,7 +115,7 @@ void	death(t_philo *ph)
 	pthread_mutex_lock(ph->death);
 	pthread_mutex_lock(ph->write);
 	printf("%dms\t Philo %d \033[1;31mdied\033[0m\n",
-		get_time() - ph->start_time, ph->id);
+		get_time() - ph->start_time, ph->id + 1);
 	ph->dead[0] = 1;
 	if (ph->nb_philo == 1)
 		pthread_mutex_unlock(ph->mutex);
